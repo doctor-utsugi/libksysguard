@@ -30,7 +30,7 @@ Faces.SensorFace {
         anchors.fill: parent
         z: -1
         radius: Kirigami.Units.cornerRadius
-        color: Qt.alpha(Kirigami.Theme.negativeTextColor, 0.6)
+        color: Kirigami.Theme.negativeTextColor
         visible: compactRepresentation.flashOn
     }
 
@@ -42,6 +42,7 @@ Faces.SensorFace {
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
             text: root.controller.title
+            color: compactRepresentation.flashTextColor
             visible: root.controller.showTitle && text.length > 0
             level: 2
             TextMetrics {

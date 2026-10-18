@@ -51,6 +51,7 @@ Item {
 
             text: chart.sensorsModel.sensorLabels[usedSensor] ||  (usedSensorObject.name + (usedSensorObject.shortName.length > 0 ? "\x9C" + usedSensorObject.shortName : ""))
             horizontalAlignment: Text.AlignHCenter
+            color: chart.flashTextColor
             font: Kirigami.Theme.smallFont
             opacity: 0.75
             visible: totalValue.visible && root.height > metrics.lineSpacing * 5
@@ -84,6 +85,7 @@ Item {
                 return usedSensorObject.formattedValue
             }
             horizontalAlignment: Text.AlignHCenter
+            color: chart.flashTextColor
             verticalAlignment: Text.AlignVCenter
 
             fontSizeMode: Text.HorizontalFit
@@ -122,6 +124,7 @@ Item {
 
             text: totalSensorObject.formattedValue
             horizontalAlignment: Text.AlignHCenter
+            color: chart.flashTextColor
             visible: root.totalSensor.length > 0 && root.height > metrics.lineSpacing * 4
         }
 
@@ -134,6 +137,7 @@ Item {
 
             text: chart.sensorsModel.sensorLabels[totalSensor] || (totalSensorObject.name + (totalSensorObject.shortName.length > 0 ? "\x9C" + totalSensorObject.shortName : ""))
             horizontalAlignment: Text.AlignHCenter
+            color: chart.flashTextColor
             font: Kirigami.Theme.smallFont
             opacity: 0.75
             visible: totalValue.visible && root.height > metrics.lineSpacing * 5

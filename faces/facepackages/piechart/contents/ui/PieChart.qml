@@ -78,6 +78,7 @@ ChartControls.PieChartControl {
     // Percentage of the data range above which a sensor's segment flashes red.
     readonly property real flashThreshold: root.controller.faceConfiguration.flashThreshold
     property bool flashOn: false
+    readonly property color flashTextColor: flashOn ? "white" : Kirigami.Theme.textColor
     property var overThreshold: []
 
     function updateOverThreshold() {
@@ -110,7 +111,7 @@ ChartControls.PieChartControl {
     onRangeToChanged: updateOverThreshold()
 
     Timer {
-        interval: 500
+        interval: 250
         repeat: true
         running: chart.overThreshold.includes(true)
         onRunningChanged: chart.flashOn = running
@@ -120,7 +121,7 @@ ChartControls.PieChartControl {
     Charts.ArraySource {
         id: flashColorSource
         array: root.controller.highPrioritySensorIds.map((sensorId, i) =>
-            chart.flashOn && chart.overThreshold[i] ? Kirigami.Theme.negativeTextColor : root.controller.sensorColors[sensorId])
+            chart.flashOn && chart.overThreshold[i] ? "white" : root.controller.sensorColors[sensorId])
     }
 
     Sensors.Sensor {

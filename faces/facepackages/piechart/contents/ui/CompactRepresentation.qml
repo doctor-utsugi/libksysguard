@@ -30,7 +30,7 @@ Faces.CompactSensorFace {
         anchors.fill: parent
         z: -1
         radius: Kirigami.Units.cornerRadius
-        color: Qt.alpha(Kirigami.Theme.negativeTextColor, 0.6)
+        color: Kirigami.Theme.negativeTextColor
         visible: compactPie.flashOn
     }
 
@@ -51,6 +51,7 @@ Faces.CompactSensorFace {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
+            color: compactPie.flashTextColor
             text: root.controller.title
         }
     }
