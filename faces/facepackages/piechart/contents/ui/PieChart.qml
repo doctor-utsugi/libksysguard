@@ -75,20 +75,35 @@ ChartControls.PieChartControl {
     }
     chart.colorSource: root.controller.faceConfiguration.flashAboveThreshold ? flashColorSource : root.colorSource
 
-    // Percentage of the data range above which a sensor's segment flashes red.
+    // Percentage of the data range above which the face flashes red.
     readonly property real flashThreshold: root.controller.faceConfiguration.flashThreshold
     property bool flashOn: false
     readonly property color flashTextColor: flashOn ? "white" : Kirigami.Theme.textColor
     property var overThreshold: []
 
+    function percentOf(value, from, to) {
+        return to > from ? (value - from) / (to - from) * 100 : 0
+    }
+
     function updateOverThreshold() {
+        if (!root.controller.faceConfiguration.flashAboveThreshold) {
+            overThreshold = []
+            return
+        }
+        // The value shown in the centre decides when there is one, so a full but
+        // secondary sensor (e.g. a small swap) does not trigger the warning.
+        if (sensor.sensorId) {
+            const over = percentOf(sensor.value, sensor.minimum, sensor.maximum) >= chart.flashThreshold
+            overThreshold = root.controller.highPrioritySensorIds.map(() => over)
+            return
+        }
         const over = []
         for (let i = 0; i < thresholdSensors.count; ++i) {
             const sensor = thresholdSensors.objectAt(i)
             // With an automatic range each sensor is measured against its own maximum.
             const from = range.automatic ? sensor.minimum : chart.rangeFrom
             const to = range.automatic ? sensor.maximum : chart.rangeTo
-            over.push(to > from && (sensor.value - from) / (to - from) * 100 >= chart.flashThreshold)
+            over.push(chart.percentOf(sensor.value, from, to) >= chart.flashThreshold)
         }
         overThreshold = over
     }
@@ -107,6 +122,8 @@ ChartControls.PieChartControl {
         onObjectRemoved: chart.updateOverThreshold()
     }
     onFlashThresholdChanged: updateOverThreshold()
+    readonly property bool flashEnabled: root.controller.faceConfiguration.flashAboveThreshold
+    onFlashEnabledChanged: updateOverThreshold()
     onRangeFromChanged: updateOverThreshold()
     onRangeToChanged: updateOverThreshold()
 
@@ -128,6 +145,8 @@ ChartControls.PieChartControl {
         id: sensor
         sensorId: root.controller.totalSensors.length > 0 ? root.controller.totalSensors[0] : ""
         updateRateLimit: chart.updateRateLimit
+        onValueChanged: chart.updateOverThreshold()
+        onMetaDataChanged: chart.updateOverThreshold()
     }
 
     UsedTotalDisplay {
