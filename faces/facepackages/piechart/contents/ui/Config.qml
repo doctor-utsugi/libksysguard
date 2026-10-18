@@ -29,6 +29,9 @@ Kirigami.FormLayout {
     property alias cfg_rangeToUnit: rangeToSpin.unit
     property alias cfg_rangeToMultiplier: rangeToSpin.multiplier
 
+    property alias cfg_flashAboveThreshold: flashCheckbox.checked
+    property alias cfg_flashThreshold: flashThresholdSpin.value
+
     QQC2.CheckBox {
         id: showSensorsLegendCheckbox
         text: i18nc("@option:check", "Show legend")
@@ -73,5 +76,21 @@ Kirigami.FormLayout {
         Layout.preferredWidth: Kirigami.Units.gridUnit * 10
         enabled: !rangeAutoCheckbox.checked
         sensors: controller.highPrioritySensorIds
+    }
+
+    QQC2.CheckBox {
+        id: flashCheckbox
+        Kirigami.FormData.label: i18nc("@label", "Warning:")
+        text: i18nc("@option:check", "Flash red above threshold")
+    }
+    Faces.SuffixSpinBox {
+        id: flashThresholdSpin
+        Kirigami.FormData.label: i18nc("@label:spinbox", "Threshold:")
+        Layout.maximumWidth: Kirigami.Units.gridUnit * 10
+        enabled: flashCheckbox.checked
+        from: 1
+        to: 100
+        spacing: 0
+        suffix: i18nc("@label percent", "%")
     }
 }

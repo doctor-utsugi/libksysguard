@@ -25,8 +25,18 @@ Faces.CompactSensorFace {
     // Prefer keeping things square as the pie itself also maintains a square aspect
     Layout.preferredWidth: horizontalFormFactor ? Math.min(Math.max(height, Layout.minimumWidth), Layout.maximumWidth) : -1
 
+    // Flashes the whole face red while a sensor is above the warning threshold.
+    Rectangle {
+        anchors.fill: parent
+        z: -1
+        radius: Kirigami.Units.cornerRadius
+        color: Qt.alpha(Kirigami.Theme.negativeTextColor, 0.6)
+        visible: compactPie.flashOn
+    }
+
     contentItem: ColumnLayout {
         PieChart {
+            id: compactPie
             Layout.maximumHeight: Math.min(Math.max(root.width, Layout.minimumHeight), root.height)
             Layout.fillWidth: true
             Layout.fillHeight: true

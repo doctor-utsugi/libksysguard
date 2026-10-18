@@ -25,6 +25,15 @@ Faces.SensorFace {
     Layout.minimumWidth: Kirigami.Units.gridUnit * 8
     Layout.preferredWidth: Math.max(titleMetrics.width, legend.preferredWidth)
 
+    // Flashes the whole face red while a sensor is above the warning threshold.
+    Rectangle {
+        anchors.fill: parent
+        z: -1
+        radius: Kirigami.Units.cornerRadius
+        color: Qt.alpha(Kirigami.Theme.negativeTextColor, 0.6)
+        visible: compactRepresentation.flashOn
+    }
+
     contentItem: ColumnLayout {
         spacing: Kirigami.Units.largeSpacing
         Kirigami.Heading {

@@ -73,7 +73,55 @@ ChartControls.PieChartControl {
         model: valueSources[0].model;
         indexColumns: true
     }
-    chart.colorSource: root.colorSource
+    chart.colorSource: root.controller.faceConfiguration.flashAboveThreshold ? flashColorSource : root.colorSource
+
+    // Percentage of the data range above which a sensor's segment flashes red.
+    readonly property real flashThreshold: root.controller.faceConfiguration.flashThreshold
+    property bool flashOn: false
+    property var overThreshold: []
+
+    function updateOverThreshold() {
+        const over = []
+        for (let i = 0; i < thresholdSensors.count; ++i) {
+            const sensor = thresholdSensors.objectAt(i)
+            // With an automatic range each sensor is measured against its own maximum.
+            const from = range.automatic ? sensor.minimum : chart.rangeFrom
+            const to = range.automatic ? sensor.maximum : chart.rangeTo
+            over.push(to > from && (sensor.value - from) / (to - from) * 100 >= chart.flashThreshold)
+        }
+        overThreshold = over
+    }
+
+    Instantiator {
+        id: thresholdSensors
+        active: root.controller.faceConfiguration.flashAboveThreshold
+        model: root.controller.highPrioritySensorIds
+        delegate: Sensors.Sensor {
+            sensorId: modelData
+            updateRateLimit: chart.updateRateLimit
+            onValueChanged: chart.updateOverThreshold()
+            onMetaDataChanged: chart.updateOverThreshold()
+        }
+        onObjectAdded: chart.updateOverThreshold()
+        onObjectRemoved: chart.updateOverThreshold()
+    }
+    onFlashThresholdChanged: updateOverThreshold()
+    onRangeFromChanged: updateOverThreshold()
+    onRangeToChanged: updateOverThreshold()
+
+    Timer {
+        interval: 500
+        repeat: true
+        running: chart.overThreshold.includes(true)
+        onRunningChanged: chart.flashOn = running
+        onTriggered: chart.flashOn = !chart.flashOn
+    }
+
+    Charts.ArraySource {
+        id: flashColorSource
+        array: root.controller.highPrioritySensorIds.map((sensorId, i) =>
+            chart.flashOn && chart.overThreshold[i] ? Kirigami.Theme.negativeTextColor : root.controller.sensorColors[sensorId])
+    }
 
     Sensors.Sensor {
         id: sensor
